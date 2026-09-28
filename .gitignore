@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+
+# Databases
+*.db
+backend/instance/
+
+# Environment
+.env
+
+# Node
+node_modules/
+frontend/dist/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+nul
+
+# Logs / temp
+*.log
+
+# Runtime call audio (recordings, mic stream spool, STT uploads)
+backend/static/recordings/
+backend/static/uploads/

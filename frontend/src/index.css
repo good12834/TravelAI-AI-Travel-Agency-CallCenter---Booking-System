@@ -1,0 +1,89 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  }
+
+  h1, h2, h3, h4, .font-heading {
+    font-family: 'Outfit', 'Inter', sans-serif;
+  }
+
+  /* The heading fonts (Outfit/Inter) have no Ethiopic, Arabic or Hebrew glyphs,
+     so let the browser fall back to a system font for those scripts instead of
+     rendering tofu boxes. */
+  :lang(am), :lang(ar), :lang(he) {
+    font-family: 'Noto Sans Ethiopic', 'Noto Sans Arabic', 'Noto Sans Hebrew',
+                 'Nyala', 'Abyssinica SIL', 'Segoe UI', 'Tahoma', 'Arial', sans-serif;
+  }
+
+  html[dir='rtl'] body {
+    text-align: right;
+  }
+}
+
+/* Right-to-left adjustments -------------------------------------------------
+   Tailwind's left/right utilities are physical, so a few console elements need
+   mirroring when the document direction flips to RTL. */
+[dir='rtl'] .rtl-flip {
+  transform: scaleX(-1);
+}
+
+/* Monospace payloads (phone numbers, #call-id, byte counts) stay LTR so the
+   digit order never gets reversed. */
+[dir='rtl'] .font-mono,
+[dir='rtl'] .ltr-nums {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+/* Glassmorphism effects */
+.glass-panel {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel-hover {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-panel-hover:hover {
+  background: rgba(30, 41, 59, 0.85);
+  border-color: rgba(59, 130, 246, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+}
+
+/* Audio wave bars */
+.wave-bar {
+  display: inline-block;
+  width: 4px;
+  background: #3b82f6;
+  border-radius: 9999px;
+  animation: wave 1.2s ease-in-out infinite;
+}
+
+@keyframes wave {
+  0%, 100% { height: 6px; }
+  50% { height: 28px; }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.5);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(51, 65, 85, 0.8);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 1);
+}

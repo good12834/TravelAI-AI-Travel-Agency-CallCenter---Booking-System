@@ -1,0 +1,15 @@
+Flask==3.1.0
+Flask-SQLAlchemy==3.1.1
+Flask-Migrate==4.0.5
+Flask-JWT-Extended==4.7.1
+Flask-Cors==5.0.0
+Flask-SocketIO==5.5.1
+PyMySQL==1.1.1
+python-dotenv==1.0.1
+SQLAlchemy==2.0.51
+requests==2.31.0
+pytest==8.3.4
+python-engineio==4.14.0
+python-socketio==5.16.4
+stripe>=11.0.0
+

@@ -1,0 +1,80 @@
+version: "3.9"
+
+services:
+  # ---------- MySQL Database ----------
+  mysql:
+    image: mysql:8.0
+    container_name: travelai-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-travelai_root}
+      MYSQL_DATABASE: travelai
+      MYSQL_USER: travelai
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-travelai_pass}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-travelai_root}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # ---------- Redis (SocketIO message queue / cache) ----------
+  redis:
+    image: redis:7-alpine
+    container_name: travelai-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ---------- Flask Backend API ----------
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: travelai-backend
+    restart: unless-stopped
+    environment:
+      FLASK_ENV: production
+      SECRET_KEY: ${SECRET_KEY:-travelai-super-secret-key-2026-secure}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-travelai-jwt-secret-key-2026-secure}
+      DATABASE_URL: mysql+pymysql://travelai:${MYSQL_PASSWORD:-travelai_pass}@mysql:3306/travelai
+      REDIS_URL: redis://redis:6379/0
+      PORT: "5000"
+    ports:
+      - "5000:5000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:5000/api/health', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  # ---------- React Frontend (built & served by nginx) ----------
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: http://localhost:5000
+    container_name: travelai-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  mysql_data:
